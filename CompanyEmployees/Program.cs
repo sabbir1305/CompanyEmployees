@@ -1,11 +1,14 @@
 using CompanyEmployees.Extentions;
+using FluentValidation.AspNetCore;
 using NLog;
+using System.Reflection;
 
 LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(), "/nlog.config")); 
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.ConfigureSqlContext(builder.Configuration);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
