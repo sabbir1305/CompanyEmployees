@@ -1,4 +1,5 @@
 using Contracts.Logger;
+using Contracts.Repository;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CompanyEmployees.Controllers
@@ -7,15 +8,18 @@ namespace CompanyEmployees.Controllers
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
+        private readonly IRepositoryManager repositoryManager;
+        
         private static readonly string[] Summaries = new[]
         {
         "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
     };
 
         private ILoggerManager _logger; 
-        public WeatherForecastController(ILoggerManager logger) 
+        public WeatherForecastController(ILoggerManager logger, IRepositoryManager repositoryManager) 
         { 
             _logger = logger; 
+            this.repositoryManager = repositoryManager;
         }
 
         [HttpGet(Name = "GetWeatherForecast")]
@@ -32,6 +36,12 @@ namespace CompanyEmployees.Controllers
                 Summary = Summaries[Random.Shared.Next(Summaries.Length)]
             })
             .ToArray();
+        }
+
+        [HttpGet(Name = "GetEmployees")]
+        public IEnumerable<string> GetEmployees()
+        {
+            return new string[] { "value1", "value2" };
         }
     }
 }
