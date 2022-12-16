@@ -37,11 +37,5 @@ namespace CompanyEmployees.Controllers
             })
             .ToArray();
         }
-
-        [HttpGet(Name = "GetEmployees")]
-        public IEnumerable<string> GetEmployees()
-        {
-            return new string[] { "value1", "value2" };
-        }
     }
 }
