@@ -1,9 +1,10 @@
 using CompanyEmployees.Extentions;
+using Contracts.Logger;
 using FluentValidation.AspNetCore;
 using NLog;
 using System.Reflection;
 
-LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(), "/nlog.config")); 
+LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(), "/nlog.config"));
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,7 +37,16 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+using (var serviceScope = app.Services.CreateScope())
+{
+    var services = serviceScope.ServiceProvider;
 
+    var logger = services.GetRequiredService<ILoggerManager>();
+
+
+    app.ConfigureExceptionHandler(logger);
+
+}
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
