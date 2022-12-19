@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Entities.DataTransferObjects;
+using Entities.DataTransferObjects.Employees;
 using Entities.Models;
 
 namespace CompanyEmployees.MapperProfiles
@@ -17,6 +18,8 @@ namespace CompanyEmployees.MapperProfiles
             CreateMap<CompanyForCreationDto, Company>();
 
             CreateMap<EmployeeForCreationDto, Employee>();
+
+            CreateMap<EmployeeForUpdateDto, Employee>();
         }
     }
 }

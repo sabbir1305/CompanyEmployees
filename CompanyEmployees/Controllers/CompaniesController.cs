@@ -4,6 +4,7 @@ using CompanyEmployees.ResourcePath;
 using Contracts.Logger;
 using Contracts.Repository;
 using Entities.DataTransferObjects;
+using Entities.DataTransferObjects.Companies;
 using Entities.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -118,6 +119,25 @@ namespace CompanyEmployees.Controllers
                 return NotFound();
             }
             _repository.CompanyRepository.DeleteCompany(company);
+            _repository.Save();
+            return NoContent();
+        }
+
+        [HttpPut("{id}")]
+        public IActionResult UpdateCompany(Guid id, [FromBody] CompanyForUpdateDto company)
+        {
+            if (company == null)
+            {
+                _logger.LogError("CompanyForUpdateDto object sent from client is null.");
+                return BadRequest("CompanyForUpdateDto object is null");
+            }
+            var companyEntity = _repository.CompanyRepository.GetCompany(id, trackChanges: true);
+            if (companyEntity == null)
+            {
+                _logger.LogInfo($"Company with id: {id} doesn't exist in the database.");
+                return NotFound();
+            }
+            _mapper.Map(company, companyEntity);
             _repository.Save();
             return NoContent();
         }
