@@ -1,5 +1,5 @@
 # This project is the implementaion of ultimate asp.net core web api book
-# There are many things implemented diffrently for example this project is based on .net core 6
+- There are many things implemented diffrently for example this project is based on .net core 6
 
 # How to run - 
 1. Install .net 6 sdk
