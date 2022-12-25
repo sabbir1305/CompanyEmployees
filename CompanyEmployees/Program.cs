@@ -1,6 +1,7 @@
 using CompanyEmployees.Extentions;
 using Contracts.Logger;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Mvc;
 using NLog;
 using System.Reflection;
 
@@ -12,6 +13,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.ConfigureSqlContext(builder.Configuration);
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.ConfigureRepositoryService();
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.SuppressModelStateInvalidFilter = true;
+});
 
 builder.Services.AddControllers(config =>
 {

@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace Entities.DataTransferObjects.Employees
 {
-    public class EmployeeForUpdateDto : EmployeeForManipulationDto
+    public class EmployeeForManipulationDto
     {
-
+        public string Name { get; set; }
+        public int Age { get; set; }
+        public string Position { get; set; }
     }
 }
