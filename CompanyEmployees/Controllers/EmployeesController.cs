@@ -114,6 +114,7 @@ namespace CompanyEmployees.Controllers
                 _logger.LogError("EmployeeForUpdateDto object sent from client is null.");
                 return BadRequest("EmployeeForUpdateDto object is null");
             }
+            TryValidateModel(employee);
             if (!ModelState.IsValid)
             {
                 _logger.LogError(ValidationMessages.InvalidModelStateMessage(nameof(employee)));
@@ -157,6 +158,11 @@ namespace CompanyEmployees.Controllers
             }
             var employeeToPatch = _mapper.Map<EmployeeForUpdateDto>(employeeEntity);
             patchDoc.ApplyTo(employeeToPatch);
+            TryValidateModel(employeeToPatch);
+            if (!ModelState.IsValid) { 
+                _logger.LogError("Invalid model state for the patch document"); 
+                return UnprocessableEntity(ModelState); 
+            }
             _mapper.Map(employeeToPatch, employeeEntity);
             _repository.Save();
             return NoContent();

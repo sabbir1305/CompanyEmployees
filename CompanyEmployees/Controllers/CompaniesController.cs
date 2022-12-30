@@ -8,6 +8,7 @@ using Entities.DataTransferObjects.Companies;
 using Entities.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Persistance.Validation;
 
 namespace CompanyEmployees.Controllers
 {
@@ -57,8 +58,14 @@ namespace CompanyEmployees.Controllers
             if (company == null)
             {
                 _logger.LogError("CompanyForCreationDto object sent from client is null.");
+                return BadRequest("CompanyForCreationDto object is null");
             }
-            return BadRequest("CompanyForCreationDto object is null");
+
+            if (!ModelState.IsValid)
+            {
+                _logger.LogError(ValidationMessages.InvalidModelStateMessage(nameof(company)));
+                return UnprocessableEntity(ModelState);
+            }
 
             var companyEntity = _mapper.Map<Company>(company);
             _repository.CompanyRepository.CreateCompany(companyEntity);
@@ -98,6 +105,11 @@ namespace CompanyEmployees.Controllers
                 _logger.LogError("Company collection sent from client is null.");
                 return BadRequest("Company collection is null");
             }
+            if (!ModelState.IsValid)
+            {
+                _logger.LogError(ValidationMessages.InvalidModelStateMessage(nameof(companyCollection)));
+                return UnprocessableEntity(ModelState);
+            }
             var companyEntities = _mapper.Map<IEnumerable<Company>>(companyCollection);
             foreach (var company in companyEntities)
             {
@@ -130,6 +142,11 @@ namespace CompanyEmployees.Controllers
             {
                 _logger.LogError("CompanyForUpdateDto object sent from client is null.");
                 return BadRequest("CompanyForUpdateDto object is null");
+            }
+            if (!ModelState.IsValid)
+            {
+                _logger.LogError(ValidationMessages.InvalidModelStateMessage(nameof(company)));
+                return UnprocessableEntity(ModelState);
             }
             var companyEntity = _repository.CompanyRepository.GetCompany(id, trackChanges: true);
             if (companyEntity == null)
