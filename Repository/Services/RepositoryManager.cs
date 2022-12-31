@@ -39,6 +39,6 @@ namespace Repository.Services
             }
         }
 
-        public void Save() => repositoryContext.SaveChanges();
+        public async Task SaveAsync() => await repositoryContext.SaveChangesAsync();
     }
 }
