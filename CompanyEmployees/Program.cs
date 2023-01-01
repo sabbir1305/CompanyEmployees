@@ -1,3 +1,4 @@
+using CompanyEmployees.ActionFilters;
 using CompanyEmployees.Extentions;
 using Contracts.Logger;
 using FluentValidation.AspNetCore;
@@ -17,6 +18,9 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
     options.SuppressModelStateInvalidFilter = true;
 });
+
+builder.Services.AddScoped<ValidationFilterAttribute>();
+builder.Services.AddScoped<ValidateCompanyExistsAttribute>();
 
 builder.Services.AddControllers(config =>
 {
