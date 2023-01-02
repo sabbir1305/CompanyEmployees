@@ -6,8 +6,10 @@ using Contracts.Repository;
 using Entities.DataTransferObjects;
 using Entities.DataTransferObjects.Employees;
 using Entities.Models;
+using Entities.RequestFeatures;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Persistance.Validation;
 
 namespace CompanyEmployees.Controllers
@@ -27,7 +29,7 @@ namespace CompanyEmployees.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetEmployeesForCompany(Guid companyId)
+        public async Task<IActionResult> GetEmployeesForCompany(Guid companyId, [FromQuery] EmployeeParameters employeeParameters)
         {
             var company = await _repository.CompanyRepository.GetCompanyAsync(companyId, trackChanges: false);
             if (company == null)
@@ -35,7 +37,10 @@ namespace CompanyEmployees.Controllers
                 _logger.LogInfo($"Company with id: {companyId} doesn't exist in the database.");
                 return NotFound();
             }
-            var employeesFromDb = await _repository.EmployeeRepository.GetEmployeesAsync(companyId, trackChanges: false);
+            var employeesFromDb = await _repository.EmployeeRepository.GetEmployeesAsync(companyId, employeeParameters, trackChanges: false);
+
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(employeesFromDb.MetaData));
+
             var employeesDto = _mapper.Map<IEnumerable<EmployeeDto>>(employeesFromDb);
             return Ok(employeesDto);
         }
@@ -50,6 +55,8 @@ namespace CompanyEmployees.Controllers
                 return NotFound();
             }
             var employeeDb = await _repository.EmployeeRepository.GetEmployeeAsync(companyId, id, trackChanges: false);
+
+
             if (employeeDb == null)
             {
                 _logger.LogInfo($"Employee with id: {id} doesn't exist in the database.");

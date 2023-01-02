@@ -1,4 +1,6 @@
 ﻿using Entities.Models;
+using Entities.RequestFeatures;
+using Entities.RequestFeatures.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +11,7 @@ namespace Contracts.Repository
 {
     public interface IEmployeeRepository
     {
-        Task<IEnumerable<Employee>> GetEmployeesAsync(Guid companyId, bool trackChanges);
+        Task<PagedList<Employee>> GetEmployeesAsync(Guid companyId, EmployeeParameters employeeParameters, bool trackChanges);
 
         Task<Employee> GetEmployeeAsync(Guid companyId, Guid id, bool trackChanges);
 
