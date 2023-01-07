@@ -3,6 +3,7 @@ using CompanyEmployees.ActionFilters;
 using CompanyEmployees.ResourcePath;
 using Contracts.Logger;
 using Contracts.Repository;
+using Contracts.Utility;
 using Entities.DataTransferObjects;
 using Entities.DataTransferObjects.Employees;
 using Entities.Models;
@@ -22,11 +23,13 @@ namespace CompanyEmployees.Controllers
         private readonly IRepositoryManager _repository;
         private readonly ILoggerManager _logger;
         private readonly IMapper _mapper;
+        private readonly IDataShaper<EmployeeDto> _dataShaper;
 
-        public EmployeesController(IRepositoryManager repository, ILoggerManager logger, IMapper mapper)
+        public EmployeesController(IRepositoryManager repository, ILoggerManager logger, IMapper mapper, IDataShaper<EmployeeDto> dataShaper)
         {
             _repository = repository;
             _logger = logger; _mapper = mapper;
+            _dataShaper = dataShaper;
         }
 
         [HttpGet]
@@ -46,7 +49,7 @@ namespace CompanyEmployees.Controllers
             Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(employeesFromDb.MetaData));
 
             var employeesDto = _mapper.Map<IEnumerable<EmployeeDto>>(employeesFromDb);
-            return Ok(employeesDto);
+            return Ok(_dataShaper.ShapeData(employeesDto, employeeParameters.Fields);
         }
 
         [HttpGet("{id}", Name = EmployeeEndpoints.GetEmployeeForCompany)]
