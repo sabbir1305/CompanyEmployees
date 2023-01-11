@@ -49,7 +49,7 @@ namespace CompanyEmployees.Controllers
             Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(employeesFromDb.MetaData));
 
             var employeesDto = _mapper.Map<IEnumerable<EmployeeDto>>(employeesFromDb);
-            return Ok(_dataShaper.ShapeData(employeesDto, employeeParameters.Fields);
+            return Ok(_dataShaper.ShapeData(employeesDto, employeeParameters.Fields));
         }
 
         [HttpGet("{id}", Name = EmployeeEndpoints.GetEmployeeForCompany)]
