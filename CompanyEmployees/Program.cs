@@ -1,5 +1,6 @@
 using CompanyEmployees.ActionFilters;
 using CompanyEmployees.Extentions;
+using CompanyEmployees.Utilities;
 using Contracts.Logger;
 using Contracts.Utility;
 using Entities.DataTransferObjects;
@@ -25,6 +26,7 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 builder.Services.AddScoped<ValidationFilterAttribute>();
 builder.Services.AddScoped<ValidateCompanyExistsAttribute>();
 builder.Services.AddScoped<IDataShaper<EmployeeDto>, DataShaper<EmployeeDto>>();
+builder.Services.AddScoped<EmployeeLinks>();
 
 builder.Services.AddControllers(config =>
 {
