@@ -2,11 +2,13 @@
 using CompanyEmployees.ActionFilters;
 using CompanyEmployees.ModelBinder;
 using CompanyEmployees.ResourcePath;
+using CompanyEmployees.Utilities.Constants;
 using Contracts.Logger;
 using Contracts.Repository;
 using Entities.DataTransferObjects;
 using Entities.DataTransferObjects.Companies;
 using Entities.Models;
+using Marvin.Cache.Headers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Persistance.Validation;
@@ -15,6 +17,7 @@ namespace CompanyEmployees.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [ResponseCache(CacheProfileName = CacheProfileConstants.Profile120Seconds)]
     public class CompaniesController : ControllerBase
     {
         private readonly IRepositoryManager _repository;
@@ -37,6 +40,8 @@ namespace CompanyEmployees.Controllers
 
         [HttpGet("{id}", Name = CompanyEndPoints.GetCompanyById)]
 
+        [HttpCacheExpiration(CacheLocation = CacheLocation.Public, MaxAge = 60)]
+        [HttpCacheValidation(MustRevalidate = false)]
         public async Task<IActionResult> GetCompany(Guid id)
         {
             var company = await _repository.CompanyRepository.GetCompanyAsync(id, false);

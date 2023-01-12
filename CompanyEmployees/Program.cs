@@ -1,6 +1,7 @@
 using CompanyEmployees.ActionFilters;
 using CompanyEmployees.Extentions;
 using CompanyEmployees.Utilities;
+using CompanyEmployees.Utilities.Constants;
 using Contracts.Logger;
 using Contracts.Utility;
 using Entities.DataTransferObjects;
@@ -28,10 +29,23 @@ builder.Services.AddScoped<ValidateCompanyExistsAttribute>();
 builder.Services.AddScoped<IDataShaper<EmployeeDto>, DataShaper<EmployeeDto>>();
 builder.Services.AddScoped<EmployeeLinks>();
 
+builder.Services.ConfigureResponseCaching();
+builder.Services.AddHttpCacheHeaders(
+    (expirationModelOptions) =>
+    {
+        expirationModelOptions.MaxAge = 65;
+        expirationModelOptions.CacheLocation = Marvin.Cache.Headers.CacheLocation.Private;
+    },
+    (validationModelOptions) =>
+    {
+        validationModelOptions.MustRevalidate = true;
+    });
+
 builder.Services.AddControllers(config =>
 {
     config.RespectBrowserAcceptHeader = true;
     config.ReturnHttpNotAcceptable = true;
+    config.CacheProfiles.Add(CacheProfileConstants.Profile120Seconds, new CacheProfile { Duration = 120 });
 }).
 AddXmlDataContractSerializerFormatters().
 AddCustomCSVFormatter();
@@ -69,6 +83,8 @@ using (var serviceScope = app.Services.CreateScope())
     app.ConfigureExceptionHandler(logger);
 
 }
+app.UseResponseCaching();
+app.UseHttpCacheHeaders();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

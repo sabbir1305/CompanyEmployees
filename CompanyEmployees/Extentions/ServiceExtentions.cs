@@ -22,5 +22,7 @@ namespace CompanyEmployees.Extentions
         public static IMvcBuilder AddCustomCSVFormatter(this IMvcBuilder builder) => 
             builder.AddMvcOptions(config => 
             config.OutputFormatters.Add(new CsvOutputFormatter()));
+
+        public static void ConfigureResponseCaching(this IServiceCollection services) => services.AddResponseCaching();
     }
 }
