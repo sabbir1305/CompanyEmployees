@@ -1,4 +1,5 @@
 ﻿using Entities.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Persistance.EntityConfigurations;
 using System;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Persistance.Repositories
 {
-    public class RepositoryContext : DbContext {
+    public class RepositoryContext : IdentityDbContext<User> {
         public RepositoryContext(DbContextOptions<RepositoryContext> options) : base(options) {
         } 
         public DbSet<Company> Companies { get; set; } 
@@ -21,7 +22,7 @@ namespace Persistance.Repositories
 
             modelBuilder.ApplyConfiguration(new EmployeeEntityConfiguration());
             modelBuilder.ApplyConfiguration(new CompanyEntityConfiguration());
-
+            modelBuilder.ApplyConfiguration(new RoleConfiguration());
         }
 
     }

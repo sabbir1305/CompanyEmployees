@@ -1,7 +1,9 @@
 ﻿using CompanyEmployees.ResponseFormatter;
 using Contracts.Logger;
 using Contracts.Repository;
+using Entities.Models;
 using LoggerService;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Persistance.Repositories;
 using Repository.Services;
@@ -24,5 +26,22 @@ namespace CompanyEmployees.Extentions
             config.OutputFormatters.Add(new CsvOutputFormatter()));
 
         public static void ConfigureResponseCaching(this IServiceCollection services) => services.AddResponseCaching();
+
+        public static void ConfigureIdentity(this IServiceCollection services)
+        {
+            var builder = services.AddIdentityCore<User>(o =>
+            {
+                o.Password.RequireLowercase = false;
+                o.Password.RequireUppercase = false; 
+                o.Password.RequireNonAlphanumeric = false;
+                o.Password.RequiredLength = 10;
+                o.User.RequireUniqueEmail = true;
+            });
+
+            builder = new IdentityBuilder(builder.UserType, typeof(IdentityRole), builder.Services);
+            builder.AddEntityFrameworkStores<RepositoryContext>()
+                .AddDefaultTokenProviders();
+
+        }
     }
 }

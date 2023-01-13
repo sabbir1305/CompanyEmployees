@@ -64,6 +64,8 @@ builder.Services.AddCors(options =>
                           policy.AllowAnyMethod();
                       });
 });
+builder.Services.AddAuthentication();
+builder.Services.ConfigureIdentity();
 builder.Services.ConfigureLoggerService();
 var app = builder.Build();
 
@@ -87,6 +89,7 @@ app.UseResponseCaching();
 app.UseHttpCacheHeaders();
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
