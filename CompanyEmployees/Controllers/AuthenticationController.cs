@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
 using CompanyEmployees.ActionFilters;
+using CompanyEmployees.ResourcePath;
+using Contracts.Authentication;
 using Contracts.Logger;
+using Entities.DataTransferObjects.Authentication;
 using Entities.DataTransferObjects.UserManagement;
 using Entities.Models;
 using Microsoft.AspNetCore.Http;
@@ -16,12 +19,14 @@ namespace CompanyEmployees.Controllers
     {
         private readonly ILoggerManager _logger;
         private readonly IMapper _mapper; 
-        private readonly UserManager<User> _userManager; 
-        public AuthenticationController(ILoggerManager logger, IMapper mapper, UserManager<User> userManager) {
+        private readonly UserManager<User> _userManager;
+        private readonly IAuthenticationManager _authManager;
+        public AuthenticationController(ILoggerManager logger, IMapper mapper, UserManager<User> userManager, IAuthenticationManager authManager) {
             _logger = logger; 
             _mapper = mapper; 
-            _userManager = userManager; 
-        }
+            _userManager = userManager;
+            _authManager = authManager;
+    }
 
         [HttpPost]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
@@ -40,7 +45,17 @@ namespace CompanyEmployees.Controllers
             await _userManager.AddToRolesAsync(user, userForRegistration.Roles);
             return StatusCode((int)HttpStatusCode.Created);
             
+        }
 
+        [HttpPost(AuthEndponts.Login)]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        public async Task<IActionResult> Authenticate([FromBody] UserForAuthenticationDto user)
+        {
+            if (!await _authManager.ValidateUser(user)) { 
+                _logger.LogWarn($"{nameof(Authenticate)}: Authentication failed. Wrong user name or password."); 
+                return Unauthorized(); 
+            }
+            return Ok(new { Token = await _authManager.CreateToken() });
         }
     }
 

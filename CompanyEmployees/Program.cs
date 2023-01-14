@@ -66,6 +66,8 @@ builder.Services.AddCors(options =>
 });
 builder.Services.AddAuthentication();
 builder.Services.ConfigureIdentity();
+builder.Services.ConfigureOptions(builder.Configuration);
+builder.Services.ConfigureJWT(builder.Configuration);
 builder.Services.ConfigureLoggerService();
 var app = builder.Build();
 

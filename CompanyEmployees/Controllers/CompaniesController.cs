@@ -9,6 +9,7 @@ using Entities.DataTransferObjects;
 using Entities.DataTransferObjects.Companies;
 using Entities.Models;
 using Marvin.Cache.Headers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Persistance.Validation;
@@ -30,7 +31,7 @@ namespace CompanyEmployees.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet]
+        [HttpGet(Name = CompanyEndPoints.GetCompanies), Authorize]
         public async Task<IActionResult> GetCompanies()
         {
             var companies = await _repository.CompanyRepository.GetAllCompaniesAsync(trackChanges: false);

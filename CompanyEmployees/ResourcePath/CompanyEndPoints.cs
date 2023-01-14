@@ -4,5 +4,6 @@
     {
         public const string GetCompanyById = "CompanyById";
         public const string CompanyCollection = "CompanyCollection";
+        public const string GetCompanies = "GetCompanies";
     }
 }

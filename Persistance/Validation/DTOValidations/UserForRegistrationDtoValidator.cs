@@ -15,6 +15,7 @@ namespace Persistance.Validation.DTOValidations
         {
             RuleFor(model => model.UserName).NotNull().NotEmpty().WithMessage(ValidationMessages.RequiredMessage("User name"));
             RuleFor(model => model.Password).NotNull().NotEmpty().WithMessage(ValidationMessages.RequiredMessage("Password"));
+        }
          
           
     }

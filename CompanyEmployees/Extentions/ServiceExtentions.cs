@@ -1,12 +1,16 @@
 ﻿using CompanyEmployees.ResponseFormatter;
 using Contracts.Logger;
 using Contracts.Repository;
+using Entities.ConfigurationOptions;
 using Entities.Models;
 using LoggerService;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Persistance.Repositories;
 using Repository.Services;
+using System.Text;
 
 namespace CompanyEmployees.Extentions
 {
@@ -42,6 +46,38 @@ namespace CompanyEmployees.Extentions
             builder.AddEntityFrameworkStores<RepositoryContext>()
                 .AddDefaultTokenProviders();
 
+        }
+
+        public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)
+        {
+            var jwtSettings = configuration.GetSection("JwtSettings");
+            var secretKey = Environment.GetEnvironmentVariable("SECRET");
+
+            services.AddAuthentication(opt =>
+            {
+                opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(opt =>
+            {
+                opt.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = jwtSettings.GetSection("validIssuer").Value,
+                    ValidAudience = jwtSettings.GetSection("validAudience").Value,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+                };
+            });
+        }
+
+        public static void ConfigureOptions(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<JwtSettings>(options =>
+            {
+                configuration.GetSection(key: nameof(JwtSettings));
+            });
         }
     }
 }
